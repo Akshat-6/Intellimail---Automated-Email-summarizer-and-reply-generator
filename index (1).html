@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            white-space: pre-wrap; /* Preserve text formatting */
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Email Analysis</h1>
+        <button onclick="fetchEmail()">Fetch Latest Email</button>
+
+        <h3>📌 Subject:</h3>
+        <p id="subject" class="output">Fetching...</p>
+
+        <h3>📩 From:</h3>
+        <p id="from" class="output">Fetching...</p>
+
+        <h3>📜 Body:</h3>
+        <p id="body" class="output">Fetching...</p>
+
+        <h3>📊 Sentiment Analysis:</h3>
+        <p id="sentiment" class="output">Analyzing...</p>
+
+        <h3>📖 Summary:</h3>
+        <p id="summary" class="output">Summarizing...</p>
+
+        <h3>✉️ Suggested Reply:</h3>
+        <textarea id="reply" placeholder="Generating reply..."></textarea>
+
+        <button onclick="sendReply()">Send Reply</button>
+    </div>
+
+    <script>
+        async function fetchEmail() {
+            try {
+                let response = await fetch("http://127.0.0.1:8000/process-email");
+                if (!response.ok) throw new Error("Failed to fetch email");
+                let data = await response.json();
+        
+                document.getElementById("subject").innerText = data.subject || "No Subject";
+                document.getElementById("from").innerText = data.from || "Unknown Sender";
+                document.getElementById("body").innerText = data.body || "No Email Body";
+                document.getElementById("sentiment").innerText = data.sentiment.label + " (" + (data.sentiment.score * 100).toFixed(2) + "%)";
+                document.getElementById("summary").innerText = data.summary || "No Summary";
+                document.getElementById("reply").value = data.reply || "No Suggested Reply";
+            } catch (error) {
+                alert("Error fetching email: " + error.message);
+            }
+        }
+        </script>
+        
+</body>
+</html>
